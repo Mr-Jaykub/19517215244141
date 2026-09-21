@@ -32,7 +32,7 @@ def test_prepare_dot_bracket_without_nupack(examples, no_nupack_env):
     out = examples / "out given"
     proc = run_cli("prepare", examples / "examples_given.db", "--outdir", out, env=no_nupack_env)
     assert proc.returncode == 0, proc.stdout + proc.stderr
-    assert "not installed (structures given, not needed)" in proc.stdout
+    assert "NUPACK:   not needed (all structures given)" in proc.stdout
     rows = _manifest(out)
     assert [(r["name"], r["status"], r["structure_source"], r["nupack_version"]) for r in rows] == [
         ("three_way_dna_54_given", "prepared", "input", "")]
@@ -61,13 +61,28 @@ def test_output_folder_guard(examples, no_nupack_env):
     out = examples / "out"
     args = ("prepare", examples / "examples_given.db", "--outdir", out)
     assert run_cli(*args, env=no_nupack_env).returncode == 0
-    (out / "stale_marker").write_text("from an earlier run")
+    record = out / "three_way_dna_54_given"
+    (record / "stale_traj.dat").write_text("from an earlier run")
+    (out / "my_notes.txt").write_text("the user's own file")
     proc = run_cli(*args, env=no_nupack_env)
     assert proc.returncode != 0 and "not empty" in proc.stderr
-    assert (out / "stale_marker").exists()
+    assert (record / "stale_traj.dat").exists()
     proc = run_cli(*args, "--overwrite", env=no_nupack_env)
     assert proc.returncode == 0, proc.stderr
-    assert not (out / "stale_marker").exists()  # replaced, not mixed
+    assert not (record / "stale_traj.dat").exists()      # old run replaced, not mixed
+    assert (record / "sequence.top").exists()
+    assert (out / "my_notes.txt").read_text() == "the user's own file"   # foreign file kept
+
+
+def test_overwrite_keeps_input_inside_outdir(examples, no_nupack_env):
+    out = examples / "out"
+    assert run_cli("prepare", examples / "examples_given.db", "--outdir", out,
+                   env=no_nupack_env).returncode == 0
+    inp = out / "examples_given.db"
+    inp.write_text((examples / "examples_given.db").read_text())
+    proc = run_cli("prepare", inp, "--outdir", out, "--overwrite", env=no_nupack_env)
+    assert proc.returncode == 0, proc.stderr
+    assert inp.exists() and (out / "three_way_dna_54_given" / "sequence.top").exists()
 
 
 def test_overwrite_refuses_foreign_folder(examples, no_nupack_env):

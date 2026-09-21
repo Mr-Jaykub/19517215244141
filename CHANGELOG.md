@@ -22,8 +22,9 @@ the MC -> MD protocol are unchanged; every difference is listed below.
   run folder gets its own copy of the parameter file, referenced by a relative name.
 - `--jobs` (default `min(12, CPU cores)`) sets parallel records; `--gpu-jobs` (default 1)
   caps concurrent MD stages on the GPU. Previously `--max-parallel` capped both.
-- The output folder must be empty unless `--overwrite` is given, and `--overwrite`
-  only deletes a folder that holds a previous seq2oxdna output.
+- The output folder must be empty unless `--overwrite` is given. `--overwrite` acts only on
+  a folder that holds a previous seq2oxdna output, and removes only what that run wrote
+  (its record folders, `logs/`, `manifest.csv`, `run_parameters.json`).
 - `run_parameters.json` records versions, parameters, seeds, oxDNA's reported build,
   and sha256 of every shipped data file, with relative paths only.
 - Exit status is non-zero if any record is skipped or fails.

@@ -146,7 +146,8 @@ a message naming the position. `--material dna|rna` overrides the automatic dete
 plus `manifest.csv` (one row per record: status, energies, structure, seeds, NUPACK
 version) and `run_parameters.json` (all parameters, package versions, the oxDNA build that
 ran, and checksums of the shipped templates). The output folder must be empty;
-`--overwrite` replaces a previous seq2oxdna output folder.
+`--overwrite` replaces an earlier seq2oxdna output in it (its record folders, `logs/`,
+`manifest.csv`, `run_parameters.json`) and leaves any other files alone.
 
 ## Options and defaults
 

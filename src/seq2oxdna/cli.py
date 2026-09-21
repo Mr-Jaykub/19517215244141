@@ -16,6 +16,7 @@ run_parameters.json.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import multiprocessing
 import os
@@ -133,19 +134,46 @@ def validate_materials(tasks, args) -> None:
                      f"Mg2+={args.magnesium} M:\n  {exc}")
 
 
+def _previous_record_names(outdir: str) -> set:
+    """Record folder names of an earlier seq2oxdna output in `outdir`."""
+    names = set()
+    try:
+        with open(os.path.join(outdir, "manifest.csv")) as fh:
+            names |= {row["name"] for row in csv.DictReader(fh) if row.get("name")}
+    except (OSError, KeyError, csv.Error):
+        pass
+    try:
+        with open(os.path.join(outdir, "run_parameters.json")) as fh:
+            names |= set(json.load(fh).get("records", {}))
+    except (OSError, ValueError, AttributeError):
+        pass
+    # Only plain folder names written by safe_name(); never a path.
+    return {n for n in names if n == safe_name(n) and n not in (".", "..")}
+
+
 def prepare_outdir(outdir: str, overwrite: bool) -> None:
-    """Refuse to mix a new run into an existing output folder unless --overwrite."""
+    """Refuse to mix a new run into an existing output folder unless --overwrite.
+
+    --overwrite removes only what an earlier seq2oxdna run wrote there (its record folders,
+    logs/, manifest.csv, run_parameters.json); any other file in the folder is kept.
+    """
     if os.path.exists(outdir) and not os.path.isdir(outdir):
         sys.exit(f"ERROR: output path {outdir} exists and is not a folder")
     if os.path.isdir(outdir) and os.listdir(outdir):
         if not overwrite:
             sys.exit(f"ERROR: output folder {outdir} is not empty. Choose another --outdir, "
-                     f"or pass --overwrite to replace it.")
+                     f"or pass --overwrite to replace the previous seq2oxdna output in it.")
         if not any(os.path.exists(os.path.join(outdir, m)) for m in OUTPUT_MARKERS):
             sys.exit(f"ERROR: {outdir} is not empty and does not look like a seq2oxdna output "
-                     f"folder (no manifest.csv or run_parameters.json); refusing to delete it "
-                     f"even with --overwrite.")
-        shutil.rmtree(outdir)
+                     f"folder (no manifest.csv or run_parameters.json); refusing to delete "
+                     f"anything in it even with --overwrite.")
+        for name in sorted(_previous_record_names(outdir)) + ["logs"]:
+            path = os.path.join(outdir, name)
+            if os.path.isdir(path) and not os.path.islink(path):
+                shutil.rmtree(path)
+        for marker in OUTPUT_MARKERS:
+            if os.path.isfile(os.path.join(outdir, marker)):
+                os.remove(os.path.join(outdir, marker))
     os.makedirs(outdir, exist_ok=True)
 
 
@@ -247,7 +275,9 @@ def main(argv=None) -> None:
             sys.exit(f"ERROR: {NUPACK_INSTALL_HINT}")
         validate_materials(tasks, args)
     nupack_ver = nupack_version() or ""
-    dna_set = pinned_dna_parameter_set() if nupack_ver else ""
+    # Only ask NUPACK for the DNA set when a DNA record is folded: a dot-bracket-only job
+    # must not depend on NUPACK working.
+    dna_set = pinned_dna_parameter_set() if any(t[4] is None and t[3] == "dna" for t in tasks) else ""
 
     oxdna_bin = None
     if not inputs_only:
@@ -273,8 +303,10 @@ def main(argv=None) -> None:
         })
 
     n_parallel = max(1, min(args.jobs, len(tasks)))
-    print(f"NUPACK:   " + (f"{nupack_ver} (DNA parameter set {dna_set})" if nupack_ver
-                           else "not installed (structures given, not needed)"))
+    if not needs_fold:
+        print("NUPACK:   not needed (all structures given)")
+    else:
+        print(f"NUPACK:   {nupack_ver}" + (f" (DNA parameter set {dna_set})" if dna_set else ""))
     if oxdna_bin:
         print(f"oxDNA:    {oxdna_bin}")
     print(f"Workers:  {n_parallel} parallel"
