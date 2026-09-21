@@ -197,7 +197,17 @@ in our earlier work (MC at 30 °C, MD at 20 °C) is `--mc-temp-c 30 --md-temp-c 
 
 ### Run times
 
-<!-- filled in from the V2 reference runs -->
+Measured on our validation machine (NVIDIA RTX A6000, Intel Xeon w9-3495X) with the examples:
+
+| Step | Time (18–256 nt) |
+|---|---|
+| `seq2oxdna prepare` | about 1 s per input file, including NUPACK |
+| MC, 100 000 steps, one CPU core per record | 4 s (18 nt) to 86 s (256 nt) |
+| MD, 1 000 000 steps, one job on the GPU | 1.3–3.3 min per molecule, including cell-list retries |
+| `seq2oxdna run examples/examples.fasta` | 9 min in total |
+
+For molecules this small, running several MD jobs at once (`--gpu-jobs`) does not finish
+sooner: with four or five sharing the GPU, each MD took about 20 min in our reference runs.
 
 ## Citing
 
