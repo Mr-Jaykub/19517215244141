@@ -15,12 +15,18 @@ jobs:
         with:
           python-version: "3.11"
 
+      # oxDNA compiles with -march=native (its default, and the validated build), so a binary
+      # cached on one runner CPU dies with SIGILL on another: key the cache on the CPU model.
+      - name: Identify the runner CPU
+        id: cpu
+        run: echo "model=$( { grep -m1 '^model name' /proc/cpuinfo; grep -m1 '^flags' /proc/cpuinfo; } | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+
       - name: Cache the oxDNA build
         id: oxdna-cache
         uses: actions/cache@v4
         with:
           path: oxDNA
-          key: oxdna-cpu-dbdc7265-ubuntu-22.04-v1
+          key: oxdna-cpu-dbdc7265-ubuntu-22.04-${{ steps.cpu.outputs.model }}-v2
 
       - name: Build oxDNA (CPU, pinned commit)
         if: steps.oxdna-cache.outputs.cache-hit != 'true'

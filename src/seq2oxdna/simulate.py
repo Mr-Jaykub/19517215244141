@@ -161,6 +161,10 @@ def run_oxdna(oxdna_bin: str, tag: str, input_file: str, folder: str, log_path: 
     status = "OK" if rc == 0 else f"FAILED(rc={rc})"
     print(f"[{tag}] {input_file}: {status} in {elapsed:.0f}s"
           + (f" ({len(alerts)} alert(s))" if alerts else ""), flush=True)
+    if rc == -4:  # SIGILL
+        print(f"[{tag}] oxDNA was killed by an illegal CPU instruction: it was compiled for a "
+              f"different CPU (scripts/install_oxdna.sh builds for the machine it runs on). "
+              f"Rebuild oxDNA on this machine.", flush=True)
     return rc == 0, alerts, seed
 
 

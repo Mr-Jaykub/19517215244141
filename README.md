@@ -79,6 +79,8 @@ export OXDNA_BIN="$PWD/oxDNA/build/bin/oxDNA"
 
 seq2oxdna finds oxDNA through `--oxdna-bin`, then `$OXDNA_BIN`, then `oxDNA` on your `PATH`.
 The build needs git, cmake and a C++ compiler (tested: gcc 11.4, cmake 3.22, CUDA 12.3).
+oxDNA is optimised for the CPU it is built on, so build it on the machine (or cluster node
+type) that will run it; a binary copied to a different CPU can stop with "illegal instruction".
 
 ## Quick start
 

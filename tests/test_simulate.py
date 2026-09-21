@@ -141,3 +141,13 @@ def test_prepare_only_writes_no_simulation_files(tmp_path):
 def test_build_failure_is_reported_not_raised(tmp_path, bad):
     result = process_sequence((0, "x", bad, "dna", "((([.])))", _cfg(tmp_path, inputs_only=True)))
     assert result["status"].startswith("input-build failed")
+
+
+def test_illegal_instruction_gets_a_rebuild_hint(tmp_path, capsys):
+    """A binary built for another CPU dies with SIGILL (rc -4); say so instead of just failing."""
+    fake = tmp_path / "oxDNA"
+    fake.write_text("#!/bin/sh\nkill -ILL $$\n")
+    fake.chmod(0o755)
+    ok, _alerts, _seed = run_oxdna(str(fake), "t", "input_mc", str(tmp_path), str(tmp_path / "logs" / "x.log"))
+    assert ok is False
+    assert "illegal CPU instruction" in capsys.readouterr().out
