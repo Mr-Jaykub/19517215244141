@@ -23,8 +23,9 @@ dot-bracket (given) ───┘                                        (prepare
 2. **Starting layout.** Builds a 3D starting configuration in which every backbone bond and
    base-pair distance is exact by construction: stems are helices (B-form twist for DNA,
    A-form for RNA), and each loop is a circle sized so its perimeter equals the strand's
-   contour length. Branches are tilted into 3D and checked for threaded loops and
-   interpenetrating branches, which are resolved before any file is written.
+   contour length. Branches are tilted into 3D; threaded loops and interpenetrating
+   branches are then resolved by rotations that keep every bond and pair length, and any
+   that remain are reported (`geom_overlaps`, `geom_threads` in `manifest.csv`).
 3. **Restraints.** Writes a `forces.txt` with two reciprocal `mutual_trap` forces per base pair.
 4. **Relaxation (`run` only).** MC on the CPU (100 000 steps), then MD on a CUDA GPU
    (1 000 000 steps, dt 0.003) with the traps on, using oxDNA2 (DNA) or oxRNA2 (RNA) with
