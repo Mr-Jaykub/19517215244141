@@ -19,8 +19,13 @@ Example records (examples/)
 
 hairpin_dna_18      18-nt DNA hairpin GCGTTGCTTCTCCAACGC from the oxDNA distribution,
                     examples/HAIRPIN (GPL-3.0).
-three_way_dna_54    54-nt DNA three-way junction designed for this project; the same
-                    sequence with its designed target structure is three_way_dna_54_given.
+R10D_dna_256        256-nt DNA nanostructure R10D, selected for cellular uptake.
+                    Rajwar A, Eichhorn L, Palacka J, Ly S, Benson E (2026). Iterative
+                    Selection of DNA Nanostructures for Cellular Uptake. Adv Mater e74852.
+                    doi:10.1002/adma.74852
+three_way_dna_54_given
+                    54-nt DNA three-way junction designed for this project, given with its
+                    designed target structure (examples_given.db).
 trna_phe_rna_76     Yeast tRNA-Phe, sequence of PDB entry 1EHZ.
                     Shi H, Moore PB (2000). The crystal structure of yeast phenylalanine
                     tRNA at 1.93 A resolution: a classic structure revisited.

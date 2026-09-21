@@ -82,8 +82,11 @@ The build needs git, cmake and a C++ compiler (tested: gcc 11.4, cmake 3.22, CUD
 
 ## Quick start
 
-The `examples/` folder has four sequences (`examples.fasta`) and one record with its own
-structure (`examples_given.db`). The dot-bracket record needs no NUPACK:
+The `examples/` folder has four sequences in `examples.fasta` — an 18-nt DNA hairpin from the
+oxDNA distribution, the 256-nt DNA nanostructure R10D from
+[Rajwar et al. 2026](https://doi.org/10.1002/adma.74852), yeast tRNA-Phe (PDB 1EHZ) and an
+adenine riboswitch (PDB 1Y26) — and one record with its own structure, a designed 54-nt DNA
+three-way junction, in `examples_given.db`. The dot-bracket record needs no NUPACK:
 
 ```bash
 seq2oxdna prepare examples/examples_given.db --outdir given_out

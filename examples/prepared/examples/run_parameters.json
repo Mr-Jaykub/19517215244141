@@ -2,7 +2,7 @@
   "seq2oxdna_version": "1.0.0.dev0",
   "command": "prepare",
   "input_file": "examples.fasta",
-  "created": "2026-09-21T10:22:26",
+  "created": "2026-09-21T13:20:35",
   "python": "3.11.16",
   "platform": "Linux x86_64",
   "packages": {
@@ -35,7 +35,7 @@
       "md_seed": null,
       "status": "prepared"
     },
-    "three_way_dna_54": {
+    "R10D_dna_256": {
       "structure_source": "nupack",
       "mc_seed": null,
       "md_seed": null,
