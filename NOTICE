@@ -1,0 +1,41 @@
+seq2oxdna
+Copyright (C) 2026 Jakub Palacka
+Licensed under the GNU General Public License, version 3 or later (see LICENSE).
+
+Third-party material included in this repository
+------------------------------------------------
+
+src/seq2oxdna/data/oxDNA2_sequence_dependent_parameters.txt
+src/seq2oxdna/data/rna_sequence_dependent_parameters.txt
+    Copied unchanged from oxDNA (https://github.com/lorenzo-rovigatti/oxDNA),
+    commit dbdc72658ff0325910c50586e16427c45a767f44, which is distributed under the
+    GNU General Public License v3.0.
+
+src/seq2oxdna/data/input_mc, src/seq2oxdna/data/input_md_gpu
+    oxDNA input-file templates written for this project (GPL-3.0-or-later, as above).
+
+Example records (examples/)
+---------------------------
+
+hairpin_dna_18      18-nt DNA hairpin GCGTTGCTTCTCCAACGC from the oxDNA distribution,
+                    examples/HAIRPIN (GPL-3.0).
+three_way_dna_54    54-nt DNA three-way junction designed for this project; the same
+                    sequence with its designed target structure is three_way_dna_54_given.
+trna_phe_rna_76     Yeast tRNA-Phe, sequence of PDB entry 1EHZ.
+                    Shi H, Moore PB (2000). The crystal structure of yeast phenylalanine
+                    tRNA at 1.93 A resolution: a classic structure revisited.
+                    RNA 6(8):1091-1105. doi:10.1017/s1355838200000364
+add_riboswitch_rna_71
+                    Adenine riboswitch aptamer (Vibrio vulnificus add), sequence of PDB
+                    entry 1Y26.
+                    Serganov A, Yuan YR, Pikovskaya O, et al. (2004). Structural basis for
+                    discriminative regulation of gene expression by adenine- and
+                    guanine-sensing mRNAs. Chem Biol 11(12):1729-1741.
+                    doi:10.1016/j.chembiol.2004.11.018
+
+Not included
+------------
+
+NUPACK (https://www.nupack.org) is NOT included in any form. Its licence permits
+non-commercial academic use but forbids redistribution; users install it themselves.
+oxDNA itself is not included; scripts/install_oxdna.sh builds it from its public source.

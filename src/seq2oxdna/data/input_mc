@@ -1,0 +1,42 @@
+##############################
+####  PROGRAM PARAMETERS  ####
+##############################
+backend = CPU
+sim_type = MC
+steps = 100000
+
+##############################
+####    SIM PARAMETERS    ####
+##############################
+T = 30C
+verlet_skin = 0.40
+
+##############################
+####     INTERACTIONS     ####
+##############################
+interaction_type = DNA
+salt_concentration = 1.0
+max_backbone_force = 5
+max_backbone_force_far = 10
+
+##############################
+####     MC SETTINGS      ####
+##############################
+ensemble = NVT
+delta_translation = 0.22
+delta_rotation = 0.22
+
+##############################
+####    INPUT / OUTPUT    ####
+##############################
+topology = sequence.top
+conf_file = sequence.dat
+lastconf_file = mc.conf
+trajectory_file = mc_traj.dat
+energy_file = energy.dat
+
+print_conf_interval = 1000
+print_energy_every = 1000
+
+time_scale = linear
+restart_step_counter = 1

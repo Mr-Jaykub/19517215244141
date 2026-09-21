@@ -1,0 +1,43 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    # ubuntu-22.04 has the validated gcc 11.4 / cmake 3.22 toolchain.
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache the oxDNA build
+        id: oxdna-cache
+        uses: actions/cache@v4
+        with:
+          path: oxDNA
+          key: oxdna-cpu-dbdc7265-ubuntu-22.04-v1
+
+      - name: Build oxDNA (CPU, pinned commit)
+        if: steps.oxdna-cache.outputs.cache-hit != 'true'
+        run: bash scripts/install_oxdna.sh --prefix oxDNA --jobs 4
+
+      # A normal (non-editable) install, so missing package data would fail the tests.
+      - name: Install seq2oxdna
+        run: python -m pip install ".[test]"
+
+      # NUPACK cannot be installed here (its licence forbids redistribution), so the
+      # NUPACK tests skip; the dot-bracket route and the oxDNA MC stage are tested.
+      - name: Tests
+        env:
+          OXDNA_BIN: ${{ github.workspace }}/oxDNA/build/bin/oxDNA
+        run: python -m pytest -rs
+
+      - name: README commands
+        env:
+          OXDNA_BIN: ${{ github.workspace }}/oxDNA/build/bin/oxDNA
+        run: python scripts/check_readme.py --ci

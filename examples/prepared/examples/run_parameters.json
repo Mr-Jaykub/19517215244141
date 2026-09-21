@@ -1,0 +1,57 @@
+{
+  "seq2oxdna_version": "1.0.0.dev0",
+  "command": "prepare",
+  "input_file": "examples.fasta",
+  "created": "2026-09-21T10:22:26",
+  "python": "3.11.16",
+  "platform": "Linux x86_64",
+  "packages": {
+    "numpy": "2.2.6",
+    "scipy": "1.13.1",
+    "pandas": "2.2.2"
+  },
+  "nupack_version": "4.0.2.0",
+  "nupack_dna_parameter_set": "dna04.1",
+  "oxdna": null,
+  "parameters": {
+    "material": "auto",
+    "temp_c": 37.0,
+    "sodium": 1.0,
+    "magnesium": 0.0,
+    "concentration": 1e-06,
+    "pair_stiffness": 1.0,
+    "pair_rest_length": 1.2
+  },
+  "data_files_sha256": {
+    "input_mc": "5791cd43328a7a3a2fb8939bd8335f84fe65f4df25f85e8da6793c8d5c6941cc",
+    "input_md_gpu": "458aaed8b099287eb63fad88cfae630cf3bd1437c2d3b1411d0fb1674efda1ef",
+    "oxDNA2_sequence_dependent_parameters.txt": "1fdf509ed1f55f8292b546c57ac80247d3d8e5d2226273875540f8b407bb195f",
+    "rna_sequence_dependent_parameters.txt": "4e1676bb238d620b543cceaf73081f6974f6630a963e15eb7d3cdb7890c4f38b"
+  },
+  "records": {
+    "hairpin_dna_18": {
+      "structure_source": "nupack",
+      "mc_seed": null,
+      "md_seed": null,
+      "status": "prepared"
+    },
+    "three_way_dna_54": {
+      "structure_source": "nupack",
+      "mc_seed": null,
+      "md_seed": null,
+      "status": "prepared"
+    },
+    "trna_phe_rna_76": {
+      "structure_source": "nupack",
+      "mc_seed": null,
+      "md_seed": null,
+      "status": "prepared"
+    },
+    "add_riboswitch_rna_71": {
+      "structure_source": "nupack",
+      "mc_seed": null,
+      "md_seed": null,
+      "status": "prepared"
+    }
+  }
+}

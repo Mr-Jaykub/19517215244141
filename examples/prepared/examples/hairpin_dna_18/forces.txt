@@ -1,0 +1,108 @@
+{
+type = mutual_trap
+particle = 0
+ref_particle = 17
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 17
+ref_particle = 0
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 1
+ref_particle = 16
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 16
+ref_particle = 1
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 2
+ref_particle = 15
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 15
+ref_particle = 2
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 3
+ref_particle = 14
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 14
+ref_particle = 3
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 4
+ref_particle = 13
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 13
+ref_particle = 4
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 5
+ref_particle = 12
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+
+{
+type = mutual_trap
+particle = 12
+ref_particle = 5
+stiff = 1.0
+r0 = 1.2
+PBC = 1
+}
+

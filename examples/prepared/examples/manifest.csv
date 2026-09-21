@@ -1,0 +1,5 @@
+index,name,length_nt,material,interaction_type,geom_overlaps,geom_threads,mc_ok,md_ok,final_pot_per_nuc,n_alerts,status,dot_bracket,structure_source,mc_seed,md_seed,md_backend,nupack_version,nupack_dna_parameter_set
+0,hairpin_dna_18,18,dna,DNA2,0,0,,,,0,prepared,((((((......)))))),nupack,,,,4.0.2.0,dna04.1
+1,three_way_dna_54,54,dna,DNA2,0,0,,,,0,prepared,((((((..((((((......))))))..((((((......))))))..)))))),nupack,,,,4.0.2.0,dna04.1
+2,trna_phe_rna_76,76,rna,RNA2,0,0,,,,0,prepared,((((((((.(......((((.((((((..((((...........))))..))))))..))))).))))))))....,nupack,,,,4.0.2.0,dna04.1
+3,add_riboswitch_rna_71,71,rna,RNA2,0,0,,,,0,prepared,(((((((((..(((.......((.(((((..(.((....)))..))))).)).......)))))))))))),nupack,,,,4.0.2.0,dna04.1

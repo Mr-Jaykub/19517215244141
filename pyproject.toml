@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seq2oxdna"
+dynamic = ["version"]
+description = "Single-stranded DNA/RNA sequence or dot-bracket structure to oxDNA/oxRNA inputs, with an optional restrained MC -> MD relaxation"
+readme = "README.md"
+license = { text = "GPL-3.0-or-later" }
+authors = [{ name = "Jakub Palacka" }]
+requires-python = ">=3.11"
+# NUPACK is required for records without a given structure but cannot be listed here:
+# its licence forbids redistribution, so users install it themselves (see README).
+dependencies = [
+    "numpy>=1.17",
+    "scipy>=1.0",
+    "pandas>=1.1",
+    "openpyxl>=3.0",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+seq2oxdna = "seq2oxdna.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Mr-Jaykub/seq2oxdna"
+
+[tool.setuptools.dynamic]
+version = { attr = "seq2oxdna.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+seq2oxdna = ["data/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "nupack: needs NUPACK installed (not available in CI)",
+    "oxdna: needs an oxDNA executable ($OXDNA_BIN or on PATH)",
+    "cuda: needs a CUDA build of oxDNA and a GPU",
+    "reference: byte-exact comparison with the validation machine's reference outputs",
+]
