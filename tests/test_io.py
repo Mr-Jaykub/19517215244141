@@ -122,3 +122,15 @@ def test_resolve_tasks_names_material_and_duplicates():
 def test_safe_name():
     assert safe_name(">my seq/1 ") == "my_seq_1"
     assert safe_name("...") == "seq"
+
+
+def test_resolve_tasks_names_avoid_reserved_and_case_collisions():
+    """Record folders must not take logs/manifest.csv/run_parameters.json, nor collide with each
+    other on a case-insensitive filesystem (macOS). Other names are unchanged."""
+    records = [("logs", "ACGTACGT", None), ("manifest.csv", "ACGTACGT", None),
+               ("Run_Parameters.JSON", "ACGTACGT", None), ("hp", "ACGTACGT", None),
+               ("HP", "ACGTACGT", None), ("hp", "ACGTACGT", None), ("x", "ACGTACGT", None),
+               ("x_2", "ACGTACGT", None), ("x", "ACGTACGT", None)]
+    tasks, _ = resolve_tasks(records)
+    assert [t[1] for t in tasks] == ["logs_2", "manifest.csv_2", "Run_Parameters.JSON_2", "hp",
+                                     "HP_2", "hp_3", "x", "x_2", "x_3"]

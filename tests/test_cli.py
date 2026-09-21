@@ -136,3 +136,19 @@ def test_md_steps_flag_only_on_run(examples):
 def test_version():
     proc = run_cli("--version")
     assert proc.returncode == 0 and proc.stdout.startswith("seq2oxdna ")
+
+
+def test_dry_run_exit_status_follows_the_contract(tmp_path, no_nupack_env):
+    path = tmp_path / "in.db"
+    path.write_text(">ok\nGGGAAACCC\n(((...)))\n>bad\nGGGAAACCC\n((([.])))\n")
+    proc = run_cli("prepare", path, "--dry-run", env=no_nupack_env)
+    assert proc.returncode != 0 and "SKIP bad" in proc.stdout
+    assert not (tmp_path / "in_oxdna").exists()
+
+
+def test_reserved_record_names_do_not_break_the_output(tmp_path, no_nupack_env):
+    path = tmp_path / "in.db"
+    path.write_text(">manifest.csv\nGGGAAACCC\n(((...)))\n>logs\nGGGAAACCC\n(((...)))\n")
+    proc = run_cli("prepare", path, "--outdir", tmp_path / "out", "--jobs", "2", env=no_nupack_env)
+    assert proc.returncode == 0, proc.stderr
+    assert [r["name"] for r in _manifest(tmp_path / "out")] == ["manifest.csv_2", "logs_2"]

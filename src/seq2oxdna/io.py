@@ -173,6 +173,11 @@ def read_named_sequences(path: str, seq_col=None, name_col=None):
     return _read_fasta_or_plain(path)
 
 
+# Entries every output folder has besides the record folders; a record may not take one of these
+# names.
+RESERVED_OUTPUT_NAMES = ("logs", "manifest.csv", "run_parameters.json")
+
+
 def resolve_tasks(records, material_mode: str = "auto"):
     """Normalise sequences, pick each one's material, and assign unique names.
 
@@ -184,7 +189,10 @@ def resolve_tasks(records, material_mode: str = "auto"):
     """
     tasks = []
     skipped = []
-    seen = {}
+    # Names already taken: the fixed entries of the output folder, compared case-insensitively
+    # so no record folder can collide with them (or with another record) on a case-insensitive
+    # filesystem such as macOS's default.
+    used = set(RESERVED_OUTPUT_NAMES)
     idx = 0
     for raw_name, raw_seq, raw_structure in records:
         try:
@@ -199,9 +207,11 @@ def resolve_tasks(records, material_mode: str = "auto"):
             skipped.append((raw_name or raw_seq[:20], str(exc)))
             continue
         base = safe_name(raw_name) if raw_name else f"seq{idx}"
-        count = seen.get(base, 0)
-        name = base if count == 0 else f"{base}_{count + 1}"
-        seen[base] = count + 1
+        name, k = base, 1
+        while name.lower() in used:
+            k += 1
+            name = f"{base}_{k}"
+        used.add(name.lower())
         tasks.append((idx, name, seq, material, structure))
         idx += 1
     return tasks, skipped

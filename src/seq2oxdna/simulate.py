@@ -225,7 +225,6 @@ def process_sequence(task):
     outdir = cfg["outdir"]
     folder = os.path.join(outdir, name)
     log_base = os.path.join(outdir, "logs", name)
-    os.makedirs(folder, exist_ok=True)
 
     result = {
         "index": index, "name": name, "length": len(seq), "folder": folder,
@@ -241,6 +240,9 @@ def process_sequence(task):
 
     # 1. structure -> oxDNA inputs ---------------------------------------------
     try:
+        # Inside the try: a non-folder already at this path (e.g. a stray file) must fail this
+        # record only, not abort the whole worker pool.
+        os.makedirs(folder, exist_ok=True)
         res = build_sequence_inputs(
             name=name, sequence=seq, folder=folder,
             temp_c=cfg["temp_c"], concentration=cfg["concentration"],

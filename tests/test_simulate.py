@@ -151,3 +151,10 @@ def test_illegal_instruction_gets_a_rebuild_hint(tmp_path, capsys):
     ok, _alerts, _seed = run_oxdna(str(fake), "t", "input_mc", str(tmp_path), str(tmp_path / "logs" / "x.log"))
     assert ok is False
     assert "illegal CPU instruction" in capsys.readouterr().out
+
+
+def test_stray_file_at_record_path_fails_only_that_record(tmp_path):
+    (tmp_path / "hp").write_text("not a folder")
+    result = process_sequence((0, "hp", "GCGTTGCTTCTCCAACGC", "dna", "((((((......))))))",
+                               _cfg(tmp_path, inputs_only=True)))
+    assert result["status"].startswith("input-build failed")

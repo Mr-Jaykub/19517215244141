@@ -264,6 +264,9 @@ def main(argv=None) -> None:
             source = "given" if structure is not None else "nupack"
             print(f"  [{index}] {name:<24} {material:>3} {len(seq):>4} nt  {source:>6}  "
                   f"{seq[:50]}{'...' if len(seq) > 50 else ''}")
+        if skipped or not tasks:
+            sys.stdout.flush()
+            sys.exit(f"{len(skipped)} record(s) skipped, {len(tasks)} valid: see the list above.")
         return
 
     if not tasks:

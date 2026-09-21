@@ -43,8 +43,16 @@ the MC -> MD protocol are unchanged; every difference is listed below.
   always used, with the files shipped here.
 - `--max-parallel` (see `--jobs` / `--gpu-jobs`).
 
-### Fixed
+### Fixed (in the development pipeline too, unless noted)
 
 - When MD failed before writing any energy, the MC energy file was renamed to
   `energy_md_<name>.dat` and reported as the MD energy. The MC energy file is now moved
   aside before MD starts.
+- A record named `logs`, `manifest.csv` or `run_parameters.json` took over that entry of the
+  output folder (a crash at the end, or other records' logs mixed into its folder). Such
+  records now get a suffix (`logs_2`), and names are compared case-insensitively, so records
+  such as `hp` and `HP` no longer share a folder on a case-insensitive filesystem (macOS).
+  Names that did not collide are unchanged.
+- A file already sitting where a record's folder should go aborted the whole run; now only
+  that record fails.
+- (seq2oxdna only) `--dry-run` exited 0 even when records were skipped.
