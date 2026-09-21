@@ -30,6 +30,16 @@ the MC -> MD protocol are unchanged; every difference is listed below.
 - Exit status is non-zero if any record is skipped or fails.
 - `--inputs-only` records have status `prepared` (was `inputs-only`).
 - The oxDNA log header no longer contains absolute paths.
+- Messages added: "MD needs an oxDNA built with CUDA" when oxDNA has no CUDA backend, and
+  "rebuild oxDNA on this machine" when oxDNA dies with an illegal CPU instruction (SIGILL).
+- The oxDNA release and git commit printed at start-up are recorded in `run_parameters.json`,
+  with a note when the commit is not the validated `dbdc7265`.
+- NUPACK's DNA parameter set is looked up only when a DNA record is folded; otherwise the
+  `nupack_dna_parameter_set` manifest column is empty. `validate_materials` builds a NUPACK
+  model only for materials that are folded.
+- `--jobs`, `--gpu-jobs`, `--mc-steps` and `--md-steps` must be at least 1 (checked before any
+  work starts). Advisory messages no longer cite internal notes.
+- A record whose input build fails has an empty `interaction_type` in `manifest.csv`.
 
 ### Removed
 
