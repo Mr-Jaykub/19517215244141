@@ -19,7 +19,9 @@ the MC -> MD protocol are unchanged; every difference is listed below.
   `--oxdna-bin`) exist only on `run`; `prepare` rejects them.
 - `seq2oxdna --version` prints the package version.
 - An input file that cannot be read gives a one-line `ERROR reading …` message instead of a
-  Python traceback; the exit status is 1 either way.
+  Python traceback; the exit status is 1 either way. This applies to a file whose content
+  cannot be parsed; a file that cannot be opened at all, such as one without read permission,
+  still ends in a traceback, as before.
 - NUPACK is imported lazily. Records with a given dot-bracket need no NUPACK; folding
   without NUPACK stops with an installation message. No automatic re-launch into
   another Python environment. Without NUPACK (possible only when every structure is given),
@@ -28,9 +30,10 @@ the MC -> MD protocol are unchanged; every difference is listed below.
   no NUPACK. Temperature and salt are still range-checked first, as before.
 - oxDNA is found via `--oxdna-bin`, then `$OXDNA_BIN`, then `oxDNA` on `PATH`
   (no built-in path). A relative path in `--oxdna-bin` or `$OXDNA_BIN` is resolved from the
-  folder the command is run from, and a bare name is not searched on `PATH`. If no oxDNA
-  executable is found, `run` stops before any record is processed; previously each record's
-  inputs were still built and the record then failed.
+  folder the command is run from, and a bare name is not searched on `PATH`. A leading `~` in
+  either is expanded to the home folder. If no oxDNA executable is found, `run` stops before
+  any record is processed; previously each record's inputs were still built and the record
+  then failed.
 - Templates and oxDNA's sequence-dependent parameter files ship as package data. Each
   run folder gets its own copy of the parameter file, referenced by a relative name. If a
   shipped file is missing (a broken installation), seq2oxdna stops with an error instead of
