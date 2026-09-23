@@ -92,7 +92,10 @@ def build_sequence_inputs(
 
     write_topology(oxdna_sequence, top_path)
     write_conf(oxdna_sequence, pos, a1, a3, conf_path)
-    shutil.copy(conf_path, os.path.join(folder, f"{name}.dat"))
+    name_conf = os.path.join(folder, f"{name}.dat")
+    # A record named `sequence` (or `Sequence` on a case-insensitive filesystem) already has it.
+    if not (os.path.exists(name_conf) and os.path.samefile(conf_path, name_conf)):
+        shutil.copy(conf_path, name_conf)
     write_force_file(pairs, force_path, stiffness=stiffness, rest_length=rest_length)
 
     with open(os.path.join(folder, f"{name}.db"), "w") as handle:

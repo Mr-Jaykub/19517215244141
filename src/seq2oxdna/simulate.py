@@ -243,6 +243,7 @@ def process_sequence(task):
         # Inside the try: a non-folder already at this path (e.g. a stray file) must fail this
         # record only, not abort the whole worker pool.
         os.makedirs(folder, exist_ok=True)
+        os.makedirs(log_base, exist_ok=True)
         res = build_sequence_inputs(
             name=name, sequence=seq, folder=folder,
             temp_c=cfg["temp_c"], concentration=cfg["concentration"],
@@ -402,7 +403,7 @@ def write_manifest(results, outdir: str, nupack_version: str, dna_parameter_set:
 
 
 def summarise(results, outdir: str, inputs_only: bool, nupack_version: str,
-              dna_parameter_set: str) -> str:
+              dna_parameter_set: str) -> None:
     print("\n" + "=" * 64)
     print("SUMMARY" + ("  (prepare: inputs only)" if inputs_only else "  (MC on CPU + MD on CUDA)"))
     print("=" * 64)
@@ -413,4 +414,3 @@ def summarise(results, outdir: str, inputs_only: bool, nupack_version: str,
     manifest = write_manifest(results, outdir, nupack_version, dna_parameter_set)
     print(f"\nManifest: {manifest}")
     print("=" * 64)
-    return manifest

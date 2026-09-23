@@ -12,14 +12,29 @@ the MC -> MD protocol are unchanged; every difference is listed below.
 - Split into modules: `io` (input parsing), `fold` (materials, NUPACK, dot-bracket
   validation), `layout` (3D starting geometry), `writers` (oxDNA files), `build`
   (one record), `simulate` (MC/MD), `cli`.
-- Two commands, `prepare` (inputs only; replaces `--inputs-only`) and `run`.
+- Each record's input files are written straight into its folder (no `_build/` staging
+  folder).
+- Two commands, `prepare` (inputs only; replaces `--inputs-only`) and `run`. The MC/MD
+  options (`--mc-temp-c`, `--md-temp-c`, `--mc-steps`, `--md-steps`, `--seed`, `--gpu-jobs`,
+  `--oxdna-bin`) exist only on `run`; `prepare` rejects them.
+- `seq2oxdna --version` prints the package version.
+- An input file that cannot be read gives a one-line `ERROR reading …` message instead of a
+  Python traceback; the exit status is 1 either way.
 - NUPACK is imported lazily. Records with a given dot-bracket need no NUPACK; folding
   without NUPACK stops with an installation message. No automatic re-launch into
-  another Python environment.
+  another Python environment. Without NUPACK (possible only when every structure is given),
+  the `nupack_version` column of `manifest.csv` is empty.
+- `--dry-run` no longer builds a NUPACK model for each material in the input, so it needs
+  no NUPACK. Temperature and salt are still range-checked first, as before.
 - oxDNA is found via `--oxdna-bin`, then `$OXDNA_BIN`, then `oxDNA` on `PATH`
-  (no built-in path).
+  (no built-in path). A relative path in `--oxdna-bin` or `$OXDNA_BIN` is resolved from the
+  folder the command is run from, and a bare name is not searched on `PATH`. If no oxDNA
+  executable is found, `run` stops before any record is processed; previously each record's
+  inputs were still built and the record then failed.
 - Templates and oxDNA's sequence-dependent parameter files ship as package data. Each
-  run folder gets its own copy of the parameter file, referenced by a relative name.
+  run folder gets its own copy of the parameter file, referenced by a relative name. If a
+  shipped file is missing (a broken installation), seq2oxdna stops with an error instead of
+  marking each record failed.
 - `--jobs` (default `min(12, CPU cores)`) sets parallel records; `--gpu-jobs` (default 1)
   caps concurrent MD stages on the GPU. Previously `--max-parallel` capped both.
 - The output folder must be empty unless `--overwrite` is given. `--overwrite` acts only on
@@ -27,7 +42,8 @@ the MC -> MD protocol are unchanged; every difference is listed below.
   (its record folders, `logs/`, `manifest.csv`, `run_parameters.json`).
 - `run_parameters.json` records versions, parameters, seeds, oxDNA's reported build,
   and sha256 of every shipped data file, with relative paths only.
-- Exit status is non-zero if any record is skipped or fails.
+- Exit status is non-zero if any record is skipped or fails. A `run` record whose status is
+  not `done` counts as failed, including `done — HIGH ENERGY` and `done (no energy)`.
 - `--inputs-only` records have status `prepared` (was `inputs-only`).
 - The oxDNA log header no longer contains absolute paths.
 - Messages added: "MD needs an oxDNA built with CUDA" when oxDNA has no CUDA backend, and
@@ -65,4 +81,7 @@ the MC -> MD protocol are unchanged; every difference is listed below.
   Names that did not collide are unchanged.
 - A file already sitting where a record's folder should go aborted the whole run; now only
   that record fails.
-- (seq2oxdna only) `--dry-run` exited 0 even when records were skipped.
+- With more than one record running in parallel, `--oxdna-bin` was ignored: the parallel
+  workers ran `$OXDNA_BIN` or the development pipeline's built-in oxDNA path instead.
+- (seq2oxdna only) `--dry-run` exited 0 even when records were skipped. It now also exits
+  non-zero when the input holds no valid record, as a real run does.

@@ -152,3 +152,41 @@ def test_reserved_record_names_do_not_break_the_output(tmp_path, no_nupack_env):
     proc = run_cli("prepare", path, "--outdir", tmp_path / "out", "--jobs", "2", env=no_nupack_env)
     assert proc.returncode == 0, proc.stderr
     assert [r["name"] for r in _manifest(tmp_path / "out")] == ["manifest.csv_2", "logs_2"]
+
+
+def test_record_named_sequence(tmp_path, no_nupack_env):
+    """R2 check #2 (B1): `<name>.dat` of a record named `sequence` is `sequence.dat` itself."""
+    path = tmp_path / "in.db"
+    path.write_text(">sequence\nGGGAAACCC\n(((...)))\n>other\nGGGAAACCC\n(((...)))\n")
+    out = tmp_path / "out"
+    proc = run_cli("prepare", path, "--outdir", out, env=no_nupack_env)
+    assert proc.returncode == 0, proc.stdout + proc.stderr
+    assert [(r["name"], r["status"]) for r in _manifest(out)] == [("sequence", "prepared"),
+                                                                  ("other", "prepared")]
+    conf = (out / "other" / "sequence.dat").read_bytes()
+    assert (out / "sequence" / "sequence.dat").read_bytes() == conf == (out / "other" / "other.dat").read_bytes()
+
+
+def test_stray_logs_file_fails_each_record_not_the_run(tmp_path, no_nupack_env):
+    """R2 check #2 (B2): the log folder is made inside the per-record try, as in the development
+    pipeline, so a FILE named `logs` (kept by --overwrite) fails each record, and the manifest
+    is still written."""
+    fake = tmp_path / "fake oxDNA"
+    fake.write_text("#!/bin/sh\necho 'fake oxDNA ran' >> fake_oxdna_ran\nexit 0\n")
+    fake.chmod(0o755)
+    path = tmp_path / "in.db"
+    path.write_text(">a\nGGGAAACCC\n(((...)))\n>b\nGGGAAAUCC\n(((...)))\n")
+    out = tmp_path / "out"
+    assert run_cli("prepare", path, "--outdir", out, env=no_nupack_env).returncode == 0
+    assert (out / "logs" / "a").is_dir() and (out / "logs" / "b").is_dir()   # as the pipeline does
+    for record in ("a", "b"):
+        (out / "logs" / record).rmdir()
+    (out / "logs").rmdir()
+    (out / "logs").write_text("a stray file")
+    proc = run_cli("run", path, "--outdir", out, "--overwrite", "--oxdna-bin", fake,
+                   "--mc-steps", "1", "--md-steps", "1", env=no_nupack_env)
+    assert proc.returncode != 0 and "Traceback" not in proc.stderr, proc.stdout + proc.stderr
+    rows = _manifest(out)
+    assert [r["name"] for r in rows] == ["a", "b"]
+    assert all(r["status"].startswith("input-build failed") for r in rows)
+    assert not (out / "a" / "fake_oxdna_ran").exists()
