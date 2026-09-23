@@ -40,7 +40,10 @@ git -C "$PREFIX" fetch --quiet origin "$OXDNA_COMMIT" 2>/dev/null || true
 git -C "$PREFIX" checkout --quiet "$OXDNA_COMMIT"
 
 mkdir -p "$PREFIX/build"
-cd "$PREFIX/build"
+# Physical path (-P): CMake records the folder it was configured in, and a later run through a
+# symlinked path (as scripts/check_readme.py makes) would otherwise rewrite it to a temporary
+# path that no longer exists next time.
+cd -P "$PREFIX/build"
 cmake .. -DCUDA="$CUDA"
 make -j "$JOBS" oxDNA
 
