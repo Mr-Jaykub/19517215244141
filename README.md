@@ -233,5 +233,6 @@ Sources of the example structures are listed in `NOTICE`.
 
 ## Licence
 
-GPL-3.0-or-later (see `LICENSE`), the same licence as oxDNA, whose sequence-dependent
-parameter files are included. NUPACK is not included and has its own licence.
+GPL-3.0-or-later (see `LICENSE`). The sequence-dependent parameter files in
+`src/seq2oxdna/data/` are copied unchanged from oxDNA and remain under oxDNA's licence,
+GPL-3.0 (see `NOTICE`). NUPACK is not included and has its own licence.

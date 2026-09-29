@@ -12,7 +12,8 @@ src/seq2oxdna/data/rna_sequence_dependent_parameters.txt
     GNU General Public License v3.0.
 
 src/seq2oxdna/data/input_mc, src/seq2oxdna/data/input_md_gpu
-    oxDNA input-file templates written for this project (GPL-3.0-or-later, as above).
+    oxDNA input-file templates written for this project, laid out like oxDNA's example
+    input files (GPL-3.0-or-later, as above).
 
 Example records (examples/)
 ---------------------------
