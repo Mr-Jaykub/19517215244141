@@ -2,7 +2,7 @@
   "seq2oxdna_version": "1.0.0.dev0",
   "command": "prepare",
   "input_file": "examples_given.db",
-  "created": "2026-09-21T10:22:27",
+  "created": "2026-09-30T09:24:31",
   "python": "3.11.16",
   "platform": "Linux x86_64",
   "packages": {
@@ -11,7 +11,7 @@
     "pandas": "2.2.2"
   },
   "nupack_version": "4.0.2.0",
-  "nupack_dna_parameter_set": "dna04.1",
+  "nupack_dna_parameter_set": null,
   "oxdna": null,
   "parameters": {
     "material": "auto",
