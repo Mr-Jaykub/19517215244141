@@ -4,8 +4,8 @@
 #
 #   scripts/install_oxdna.sh [--cuda] [--prefix DIR] [--jobs N]
 #
-# CPU-only by default (enough for `seq2oxdna prepare` and the MC stage). `run` needs MD
-# on CUDA, so on a machine with an NVIDIA GPU and the CUDA toolkit pass --cuda.
+# CPU-only by default (`seq2oxdna prepare` needs no oxDNA; with a CPU build, `run` stops after
+# MC). `run` needs MD on CUDA, so on a machine with an NVIDIA GPU and the CUDA toolkit pass --cuda.
 # The binary ends up at DIR/build/bin/oxDNA (default DIR: ./oxDNA); point seq2oxdna at it
 # with --oxdna-bin, OXDNA_BIN, or by adding DIR/build/bin to PATH.
 #

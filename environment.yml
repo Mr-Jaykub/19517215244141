@@ -1,6 +1,6 @@
 # Conda environment for seq2oxdna (Python 3.11, the validated version).
 # NUPACK is not on conda or PyPI: install its wheel into this environment afterwards
-# (see README, "Install NUPACK").
+# (see README, section "Install", step "2. NUPACK").
 name: seq2oxdna
 channels:
   - conda-forge

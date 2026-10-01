@@ -15,8 +15,8 @@ NUPACK_INSTALL_HINT = (
     "NUPACK is needed to fold sequences that come without a dot-bracket structure, but it "
     "is not installed in this Python environment. NUPACK is free for non-commercial "
     "academic use and cannot be redistributed, so it is not bundled: download it from "
-    "https://www.nupack.org and install it as described in the README ('Install NUPACK'). "
-    "Records that include a dot-bracket structure do not need NUPACK."
+    "https://www.nupack.org and install it as described in the README (section 'Install', "
+    "step '2. NUPACK'). Records that include a dot-bracket structure do not need NUPACK."
 )
 
 
