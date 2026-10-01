@@ -35,16 +35,18 @@ dot-bracket (given) ───┘                                        (prepare
 
 | Needed for | Requirement |
 |---|---|
-| everything | Python 3.11, numpy, scipy, pandas, openpyxl (installed below) |
+| everything | conda (for example [Miniforge](https://github.com/conda-forge/miniforge)), which installs Python 3.11, numpy, scipy, pandas and openpyxl (below) |
 | records **without** a structure | NUPACK 4.0.2.0 (free for non-commercial academic use; you download it yourself) |
-| `seq2oxdna run` | oxDNA built at commit `dbdc7265`, **with CUDA** (MD runs on the GPU) |
+| `seq2oxdna run` | oxDNA built at commit `dbdc7265`, **with CUDA** (MD runs on the GPU); building it needs git, cmake, make, a C++ compiler and the CUDA toolkit |
 
 A CPU-only machine can run `seq2oxdna prepare`. MD on the CPU is not supported (see
 [Validation](#validation-and-limits)).
 
 ## Install
 
-**1. The Python environment and seq2oxdna.** From a clone of this repository:
+**1. The Python environment and seq2oxdna.** Clone this repository
+(`git clone https://github.com/Mr-Jaykub/seq2oxdna`), go into it (`cd seq2oxdna`) and run
+every command in this README from there:
 
 <!-- check_readme: never -->
 ```bash
@@ -57,8 +59,9 @@ python -m pip install .
 ```
 
 **2. NUPACK** (only needed to fold sequences without a given structure). Register and
-download NUPACK 4.0.2.0 from <https://www.nupack.org>, unzip it, and install the wheel that
-matches your platform from its `package` folder:
+download NUPACK 4.0.2.0 from <https://www.nupack.org> and unzip it in the root of this
+repository, so that its folder `nupack-4.0.2.0/` (git ignores it) sits next to this README.
+pip then picks the wheel for your platform from its `package` folder:
 
 <!-- check_readme: never -->
 ```bash
@@ -69,8 +72,12 @@ NUPACK's licence does not allow redistribution, so it is not bundled with seq2ox
 seq2oxdna pins NUPACK's DNA parameter set to `dna04.1` (see
 [Validation](#validation-and-limits)).
 
-**3. oxDNA** (only needed for `seq2oxdna run`). Build the validated commit; on a machine
-with an NVIDIA GPU and the CUDA toolkit, add `--cuda`:
+**3. oxDNA** (only needed for `seq2oxdna run`). The script below builds the validated
+commit and needs git, cmake, make and a C++ compiler (tested: gcc 11.4, cmake 3.22,
+CUDA 12.3). As printed, it builds a **CPU-only** oxDNA, with which `seq2oxdna run` finishes
+MC but stops at MD. For `run`, on a machine with an NVIDIA GPU and the CUDA toolkit (its
+compiler `nvcc`), add `--cuda` to the first line:
+`bash scripts/install_oxdna.sh --jobs 4 --cuda`.
 
 ```bash
 bash scripts/install_oxdna.sh --jobs 4
@@ -78,7 +85,8 @@ export OXDNA_BIN="$PWD/oxDNA/build/bin/oxDNA"
 ```
 
 seq2oxdna finds oxDNA through `--oxdna-bin`, then `$OXDNA_BIN`, then `oxDNA` on your `PATH`.
-The build needs git, cmake and a C++ compiler (tested: gcc 11.4, cmake 3.22, CUDA 12.3).
+The `export` lasts only for the current terminal: in a new one, run it again with the full
+path (or add it to your shell's start-up file, such as `.bashrc`), or pass `--oxdna-bin`.
 oxDNA is optimised for the CPU it is built on, so build it on the machine (or cluster node
 type) that will run it; a binary copied to a different CPU can stop with "illegal instruction".
 
@@ -109,15 +117,15 @@ seq2oxdna run examples/examples.fasta --outdir examples_run
 ```
 
 The inputs that `prepare` builds for the examples are committed in `examples/prepared/`,
-so you can inspect them (for example in [oxView](https://sulcgroup.github.io/oxdna-viewer/))
-without installing anything.
+so you can inspect them without installing anything: for example, load a record's
+`sequence.top` together with its `sequence.dat` in [oxView](https://sulcgroup.github.io/oxdna-viewer/).
 
 ## Input
 
-One file per invocation: FASTA, plain text (one sequence per line), CSV, TSV or Excel
-(`.xlsx`), with or without names. Tables are parsed automatically: the sequence column is
-found by its content, a header row is skipped, and `--seq-col` / `--name-col` override the
-detection.
+One file per invocation: FASTA (including the `.db` layout below), plain text (one
+sequence per line), CSV, TSV or Excel (`.xlsx`), with or without names. Tables are parsed
+automatically: the sequence column is found by its content, a header row is skipped, and
+`--seq-col` / `--name-col` override the detection.
 
 A record may carry its own structure, which then replaces NUPACK:
 
@@ -133,7 +141,9 @@ without structures.
 
 Accepted structures: nested `(`, `)` and `.` only; canonical pairs (DNA A–T, G–C; RNA also
 G–U); hairpin loops of at least 3 nt; one strand per record. Anything else is skipped with
-a message naming the position. `--material dna|rna` overrides the automatic detection.
+a message naming the position. Sequences may contain only A, C, G and T (DNA) or U (RNA),
+in any case. A sequence with both T and U is skipped with a message; one with neither is
+taken as DNA. `--material dna|rna` overrides the automatic detection.
 
 ## Output
 
@@ -144,32 +154,41 @@ a message naming the position. `--material dna|rna` overrides the automatic dete
 | `sequence.top`, `sequence.dat` | oxDNA topology and starting configuration (`<name>.dat` is a copy) |
 | `forces.txt` | mutual traps, both directions for every base pair |
 | `<name>.db` | the structure used |
-| `input_mc`, `input_md_gpu` | the rendered oxDNA inputs (`run`) |
+| `input_mc`, `input_md_gpu`, `*_sequence_dependent_parameters.txt` | the rendered oxDNA inputs and the parameter file they read (`run`) |
 | `mc_<name>.conf`, `md_<name>.conf` | configurations after MC and after MD (`run`) |
 | `<name>_mc_traj.dat`, `<name>_md_traj.dat`, `energy_m[cd]_<name>.dat` | trajectories and energies (`run`) |
 
-plus `manifest.csv` (one row per record: status, energies, structure, seeds, NUPACK
-version) and `run_parameters.json` (all parameters, package versions, the oxDNA build that
+plus `logs/<name>/` (oxDNA's own output for each stage, `input_mc.log`, `input_md_gpu.log`
+and any `input_md_gpu_retry*.log`: the place to look when a stage fails), `manifest.csv`
+(one row per record: status, energies, structure, seeds, NUPACK version) and
+`run_parameters.json` (all parameters, package versions, the oxDNA build that
 ran, and checksums of the shipped templates). The output folder must be empty;
 `--overwrite` replaces an earlier seq2oxdna output in it (its record folders, `logs/`,
 `manifest.csv`, `run_parameters.json`) and leaves any other files alone.
+
+A record that worked has the status `prepared` (`prepare`) or `done` (`run`); anything else
+(`MC failed`, `MD failed`, `done — HIGH ENERGY`, …) is a failure, and then seq2oxdna, as for
+skipped records, exits with a non-zero status. `geom_overlaps` and `geom_threads` count
+loops and branches the starting layout could not untangle; they are normally 0.
 
 ## Options and defaults
 
 | Option | Default | Meaning |
 |---|---|---|
-| `--temp-c` | 37 | NUPACK folding temperature, and MC/MD temperature unless overridden |
+| `--temp-c` | 37 | NUPACK folding temperature, and MC/MD temperature unless overridden (0–100) |
 | `--mc-temp-c`, `--md-temp-c` | `--temp-c` | per-stage oxDNA temperatures (`run`) |
-| `--sodium` | 1.0 | Na⁺ (M) for NUPACK and oxDNA |
-| `--magnesium` | 0 | Mg²⁺ (M), NUPACK only |
+| `--sodium` | 1.0 | Na⁺ (M) for NUPACK and oxDNA (0.05–1.1) |
+| `--magnesium` | 0 | Mg²⁺ (M), NUPACK only (0–0.2) |
 | `--pair-stiffness`, `--pair-rest-length` | 1.0, 1.2 | mutual-trap strength and rest length (oxDNA units) |
 | `--mc-steps`, `--md-steps` | 100 000, 1 000 000 | stage lengths (`run`) |
-| `--seed` | oxDNA's choice | RNG seed for MC and MD; the seeds used are always recorded |
+| `--seed` | oxDNA's choice | RNG seed for MC and MD; the seeds used are always recorded (`run`) |
 | `--jobs` | min(12, CPU cores) | records processed in parallel |
-| `--gpu-jobs` | 1 | MD stages allowed on the GPU at the same time |
+| `--gpu-jobs` | 1 | MD stages allowed on the GPU at the same time (`run`) |
 
-`seq2oxdna prepare --help` and `seq2oxdna run --help` list everything. The schedule used
-in our earlier work (MC at 30 °C, MD at 20 °C) is `--mc-temp-c 30 --md-temp-c 20`.
+The ranges in brackets are NUPACK's limits; outside them seq2oxdna stops with an error, even
+when no record is folded. `seq2oxdna prepare --help` and `seq2oxdna run --help` list
+everything. The schedule used in our earlier work (MC at 30 °C, MD at 20 °C) is
+`--mc-temp-c 30 --md-temp-c 20`.
 
 ## Validation and limits
 
@@ -184,14 +203,16 @@ in our earlier work (MC at 30 °C, MD at 20 °C) is `--mc-temp-c 30 --md-temp-c 
   than CUDA MD for an 18-nt DNA hairpin (by 0.037 units per nucleotide; the 90 % confidence
   interval, 0.016–0.060, extends past our pre-set ±0.05 equivalence margin), so only CUDA MD
   is supported.
-- **Reproducibility.** With `--seed`, input building and MC are bit-for-bit reproducible;
-  CUDA MD is not (runs diverge within ~10⁴ steps), so compare MD results statistically.
+- **Reproducibility.** Input building is deterministic, and with `--seed` MC is bit-for-bit
+  reproducible too; CUDA MD is not (runs diverge within ~10⁴ steps), so compare MD results
+  statistically.
 - **NUPACK version.** NUPACK 4.0.2.0 changed its default DNA parameters (`dna04.2`), which
   changed 35 of the 123 folds we compared against 4.0.1.8. seq2oxdna uses `dna04.1`, which
   has the same free energies as the parameters our results were validated with.
 - **Salt.** The default 1.0 M Na⁺ is outside the 0.1–0.5 M range over which oxDNA2's salt
   dependence was fitted. We keep it because it is the condition we validated and NUPACK's
-  reference salt; other values are accepted, and one outside 0.1–0.5 M prints a note.
+  reference salt; other values from 0.05 to 1.1 M are accepted, and one outside 0.1–0.5 M
+  prints a note.
 - **Not modelled:** pseudoknots, complexes of more than one strand, G-quadruplexes and other
   non-canonical pairs. A G-rich sequence can relax to a plausible energy in the wrong fold.
 - **Platforms.** <!-- to be completed after the release tests --> Linux with an NVIDIA GPU

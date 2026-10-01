@@ -4,8 +4,11 @@ __pycache__/
 build/
 dist/
 .pytest_cache/
-# run outputs (default output folders are <input>_oxdna/)
+# run outputs (default output folders are <input>_oxdna/; the README's examples write the other three)
 *_oxdna/
+/given_out/
+/examples_out/
+/examples_run/
 # never commit NUPACK in any form (its licence forbids redistribution)
 nupack*.whl
 nupack*/
