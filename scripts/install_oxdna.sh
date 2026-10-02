@@ -44,7 +44,13 @@ mkdir -p "$PREFIX/build"
 # symlinked path (as scripts/check_readme.py makes) would otherwise rewrite it to a temporary
 # path that no longer exists next time.
 cd -P "$PREFIX/build"
-cmake .. -DCUDA="$CUDA"
+# Apple clang 17 (tested: Xcode 16.4) rejects a construct in the exprtk header bundled with this oxDNA
+# commit. The flag goes on the cmake command line because oxDNA's CMakeLists.txt ignores CXXFLAGS.
+EXTRA_FLAGS=
+if [ "$(uname -s)" = Darwin ]; then
+    EXTRA_FLAGS=-DCMAKE_CXX_FLAGS=-Wno-missing-template-arg-list-after-template-kw
+fi
+cmake .. -DCUDA="$CUDA" ${EXTRA_FLAGS:+"$EXTRA_FLAGS"}
 make -j "$JOBS" oxDNA
 
 echo

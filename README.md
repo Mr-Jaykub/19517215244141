@@ -35,9 +35,9 @@ dot-bracket (given) ───┘                                        (prepare
 
 | Needed for | Requirement |
 |---|---|
-| everything | conda (for example [Miniforge](https://github.com/conda-forge/miniforge)), which installs Python 3.11, numpy, scipy, pandas and openpyxl (below) |
+| everything | conda (for example [Miniforge](https://github.com/conda-forge/miniforge)), which installs Python 3.11, numpy, scipy, pandas, openpyxl and CMake 3.31 (below) |
 | records **without** a structure | NUPACK 4.0.2.0 (free for non-commercial academic use; you download it yourself) |
-| `seq2oxdna run` | oxDNA built at commit `dbdc7265`, **with CUDA** (MD runs on the GPU); building it needs git, cmake, make, a C++ compiler and the CUDA toolkit |
+| `seq2oxdna run` | oxDNA built at commit `dbdc7265`, **with CUDA** (MD runs on the GPU); building it needs git, make, a C++ compiler and the CUDA toolkit (CMake comes with the conda environment) |
 
 A CPU-only machine can run `seq2oxdna prepare`. MD on the CPU is not supported (see
 [Validation](#validation-and-limits)).
@@ -73,10 +73,12 @@ seq2oxdna pins NUPACK's DNA parameter set to `dna04.1` (see
 [Validation](#validation-and-limits)).
 
 **3. oxDNA** (only needed for `seq2oxdna run`). The script below builds the validated
-commit and needs git, cmake, make and a C++ compiler (tested: gcc 11.4, cmake 3.22,
-CUDA 12.3). As printed, it builds a **CPU-only** oxDNA, with which `seq2oxdna run` finishes
-MC but stops at MD. For `run`, on a machine with an NVIDIA GPU and the CUDA toolkit (its
-compiler `nvcc`), add `--cuda` to the first line:
+commit and needs git, make and a C++ compiler (on macOS, Xcode's command line tools). Run it
+with the `seq2oxdna` environment active: it uses the environment's CMake 3.31, because this
+oxDNA commit does not configure with CMake 4. Tested: gcc 11.4 and CUDA 12.3 on Ubuntu 22.04;
+Apple clang 17 on macOS 15 (CPU only). As printed, it builds a **CPU-only** oxDNA, with
+which `seq2oxdna run` finishes MC but stops at MD. For `run`, on a machine with an NVIDIA GPU
+and the CUDA toolkit (its compiler `nvcc`), add `--cuda` to the first line:
 `bash scripts/install_oxdna.sh --jobs 4 --cuda`.
 
 ```bash
@@ -168,8 +170,9 @@ ran, and checksums of the shipped templates). The output folder must be empty;
 
 A record that worked has the status `prepared` (`prepare`) or `done` (`run`); anything else
 (`MC failed`, `MD failed`, `done — HIGH ENERGY`, …) is a failure, and then seq2oxdna, as for
-skipped records, exits with a non-zero status. `geom_overlaps` and `geom_threads` count
-loops and branches the starting layout could not untangle; they are normally 0.
+skipped records, exits with a non-zero status. In the starting layout, `geom_overlaps` counts
+pairs of nucleotides that are not bonded or paired but sit too close (overlapping branches),
+and `geom_threads` counts loops that the strand passes through; both are normally 0.
 
 ## Options and defaults
 
@@ -215,8 +218,10 @@ everything. The schedule used in our earlier work (MC at 30 °C, MD at 20 °C) i
   prints a note.
 - **Not modelled:** pseudoknots, complexes of more than one strand, G-quadruplexes and other
   non-canonical pairs. A G-rich sequence can relax to a plausible energy in the wrong fold.
-- **Platforms.** <!-- to be completed after the release tests --> Linux with an NVIDIA GPU
-  (CUDA 12.3); `prepare` on macOS. Other platforms are untested.
+- **Platforms.** Tested: Ubuntu 22.04 (x86_64) with an NVIDIA RTX A6000 and CUDA 12.3
+  (everything); Ubuntu 22.04 without a GPU (install, `prepare`, and `run` up to MD); macOS 15
+  on Apple silicon and on Intel (install, `prepare` of given structures, and `run` up to MD;
+  we did not test NUPACK on macOS). Other platforms are untested.
 
 ### Run times
 

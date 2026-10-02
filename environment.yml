@@ -11,6 +11,8 @@ dependencies:
   - scipy=1.13.1
   - pandas=2.2.2
   - openpyxl=3.1.5
+  # CMake 3 for scripts/install_oxdna.sh: the validated oxDNA commit does not configure with CMake 4.
+  - cmake=3.31
   - pyyaml
   - jinja2
   - pytest
