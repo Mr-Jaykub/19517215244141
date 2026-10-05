@@ -5,7 +5,8 @@ abstract: "Single-stranded DNA/RNA sequence or dot-bracket structure to oxDNA/ox
 type: software
 license: GPL-3.0-or-later
 repository-code: "https://github.com/Mr-Jaykub/seq2oxdna"
-version: "1.0.0.dev0"
+version: "1.0.0"
+date-released: "2026-10-06"
 authors:
   - family-names: Palacka
     given-names: Jakub

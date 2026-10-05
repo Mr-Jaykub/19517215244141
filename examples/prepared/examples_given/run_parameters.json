@@ -1,8 +1,8 @@
 {
-  "seq2oxdna_version": "1.0.0.dev0",
+  "seq2oxdna_version": "1.0.0",
   "command": "prepare",
   "input_file": "examples_given.db",
-  "created": "2026-09-30T09:24:31",
+  "created": "2026-10-05T09:39:46",
   "python": "3.11.16",
   "platform": "Linux x86_64",
   "packages": {
