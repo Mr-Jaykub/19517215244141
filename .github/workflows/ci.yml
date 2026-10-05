@@ -9,9 +9,9 @@ jobs:
     # ubuntu-22.04 has the validated gcc 11.4 / cmake 3.22 toolchain.
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -25,7 +25,7 @@ jobs:
 
       - name: Cache the oxDNA build
         id: oxdna-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: oxDNA
           key: oxdna-cpu-dbdc7265-ubuntu-22.04-${{ steps.cpu.outputs.model }}-v3
