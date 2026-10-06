@@ -220,8 +220,9 @@ everything. The schedule used in our earlier work (MC at 30 °C, MD at 20 °C) i
   non-canonical pairs. A G-rich sequence can relax to a plausible energy in the wrong fold.
 - **Platforms.** Tested: Ubuntu 22.04 (x86_64) with an NVIDIA RTX A6000 and CUDA 12.3
   (everything); Ubuntu 22.04 without a GPU (install, `prepare`, and `run` up to MD); macOS 15
-  on Apple silicon and on Intel (install, `prepare` of given structures, and `run` up to MD;
-  we did not test NUPACK on macOS). Other platforms are untested.
+  on Apple silicon and on Intel (install, `prepare` of given structures, and `run` up to MD);
+  macOS 26 on Apple silicon (install with NUPACK 4.0.2.0, `prepare`, and `run` up to MD).
+  Other platforms are untested.
 
 ### Run times
 
