@@ -1,12 +1,11 @@
 cff-version: 1.2.0
-message: "If you use seq2oxdna, please cite it as below, together with NUPACK and oxDNA (see README)."
+message: "Pre-release draft, not yet formally released. If you use seq2oxdna, please cite it as below, together with NUPACK and oxDNA (see README)."
 title: "seq2oxdna"
 abstract: "Single-stranded DNA/RNA sequence or dot-bracket structure to oxDNA/oxRNA inputs, with an optional restrained MC -> MD relaxation."
 type: software
 license: GPL-3.0-or-later
-repository-code: "https://github.com/Mr-Jaykub/seq2oxdna"
+repository-code: "https://github.com/Mr-Jaykub/19517215244141"
 version: "1.0.0"
-date-released: "2026-10-06"
 authors:
   - family-names: Palacka
     given-names: Jakub

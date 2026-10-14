@@ -45,7 +45,7 @@ A CPU-only machine can run `seq2oxdna prepare`. MD on the CPU is not supported (
 ## Install
 
 **1. The Python environment and seq2oxdna.** Clone this repository
-(`git clone https://github.com/Mr-Jaykub/seq2oxdna`), go into it (`cd seq2oxdna`) and run
+(`git clone https://github.com/Mr-Jaykub/19517215244141`), go into it (`cd 19517215244141`) and run
 every command in this README from there:
 
 <!-- check_readme: never -->

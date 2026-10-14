@@ -33,7 +33,7 @@ test = ["pytest>=7"]
 seq2oxdna = "seq2oxdna.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/Mr-Jaykub/seq2oxdna"
+Homepage = "https://github.com/Mr-Jaykub/19517215244141"
 
 [tool.setuptools.dynamic]
 version = { attr = "seq2oxdna.__version__" }

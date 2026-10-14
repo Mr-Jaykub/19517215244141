@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 (2026-10-06)
+## 1.0.0 (draft, 2026-10-06)
 
 First public release. The science code is extracted from the development pipeline the
 validation was run with (`seq_to_oxdna_pipeline.py` + `nupack_oxdna_pipeline.py`,
